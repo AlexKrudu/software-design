@@ -29,7 +29,6 @@ public class AddProductServlet extends HttpServlet {
         printer.printOK();
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("OK");
     }
 
     IProductDatabaseManager dbManager;

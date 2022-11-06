@@ -17,7 +17,7 @@ public class ProductsHTMLPrinter {
 
     public void printProductsList(List<Product> products) {
         printer.println("<html><body>");
-        printer.println(products.stream().map((p) -> p.getName() + "\t" + p.getPrice() + "</br>").collect(Collectors.joining()));
+        printer.println(products.stream().map((p) -> p.getName() + "\t" + p.getPrice() + "</br>").collect(Collectors.joining("\n")));
         printer.println("</body></html>");
     }
 
