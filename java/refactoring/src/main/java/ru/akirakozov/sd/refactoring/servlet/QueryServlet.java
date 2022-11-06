@@ -2,6 +2,7 @@ package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.db.IProductDatabaseManager;
 import ru.akirakozov.sd.refactoring.db.ProductDatabaseManager;
+import ru.akirakozov.sd.refactoring.html.ProductsHTMLPrinter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,27 +18,32 @@ import java.sql.Statement;
  */
 public class QueryServlet extends HttpServlet {
 
-    public QueryServlet(IProductDatabaseManager dbManager){
+    public QueryServlet(IProductDatabaseManager dbManager) {
         this.dbManager = dbManager;
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String command = request.getParameter("command");
-
+        ProductsHTMLPrinter printer = new ProductsHTMLPrinter(response.getWriter());
         try {
             IProductDatabaseManager.ProductQuery productQuery =
                     IProductDatabaseManager.ProductQuery.valueOf(command.toUpperCase());
-            switch (productQuery){
+            switch (productQuery) {
                 case MAX:
                 case MIN:
-                    dbManager.getAggStats(productQuery);
+                    printer.printProductSelectResult(
+                            dbManager.getProductWithOption(productQuery),
+                            String.format("Product with %s price: ", productQuery.toString().toLowerCase()));
                     break;
                 case SUM:
                 case COUNT:
-                    dbManager.getProductWithOption(productQuery);
+                    String header = productQuery == IProductDatabaseManager.ProductQuery.SUM ?
+                            "Summary price: " : "Number of products: ";
+                    printer.printAggResult(dbManager.getAggStats(productQuery), header);
                     break;
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new IOException("Unsupported operation: " + command);
         }
 

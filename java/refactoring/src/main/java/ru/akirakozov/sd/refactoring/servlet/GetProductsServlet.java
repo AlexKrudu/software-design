@@ -1,6 +1,7 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.db.IProductDatabaseManager;
+import ru.akirakozov.sd.refactoring.html.ProductsHTMLPrinter;
 import ru.akirakozov.sd.refactoring.models.Product;
 
 import javax.servlet.http.HttpServlet;
@@ -23,7 +24,9 @@ public class GetProductsServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ProductsHTMLPrinter printer = new ProductsHTMLPrinter(response.getWriter());
         List<Product> productList = dbManager.getProducts();
+        printer.printProductsList(productList);
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
     }
